@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leonida Platinum — GTA 6 Trophy Guide &amp; Tracker (55/55, offline)</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div>
+    <p class="kicker">GRAND THEFT AUTO VI &middot; PLAYSTATION 5 &middot; OFFLINE GUIDE &amp; TRACKER</p>
+    <h1>Leonida Platinum</h1>
+    <p class="tagline">All 55 official trophies — 1 platinum, 2 gold, 6 silver, 46 bronze — with sourced guides, a platinum roadmap and missable warnings. No network, no account, no ads: your progress lives in this browser only.</p>
+  </div>
+  <div class="progress-card" id="progressCard">
+    <div class="big-count"><span id="earnedCount">0</span><span class="of"> / 55 earned</span></div>
+    <div class="bar" role="progressbar" aria-label="Trophies earned"><div class="bar-fill" id="barFill"></div></div>
+    <p class="grade-counts" id="gradeCounts"></p>
+    <p class="progress-note" id="progressNote"></p>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Views">
+  <button type="button" data-view="checklist" class="tab active">Checklist</button>
+  <button type="button" data-view="roadmap" class="tab">Platinum roadmap</button>
+  <button type="button" data-view="missable" class="tab">Missable warnings <span class="pill" id="missablePill">1</span></button>
+  <button type="button" data-view="about" class="tab">Sources &amp; how to use</button>
+</nav>
+
+<section class="controls" aria-label="Filters and tools">
+  <label class="ctl">Search <input id="search" type="search" placeholder="Trophy name…"></label>
+  <label class="ctl">Grade
+    <select id="gradeFilter">
+      <option value="all">All grades</option>
+      <option value="platinum">Platinum</option>
+      <option value="gold">Gold</option>
+      <option value="silver">Silver</option>
+      <option value="bronze">Bronze</option>
+    </select>
+  </label>
+  <label class="ctl">Kind
+    <select id="kindFilter">
+      <option value="all">All kinds</option>
+      <option value="story">Story</option>
+      <option value="side">Side strands</option>
+      <option value="activity">Activities</option>
+      <option value="collectible">Collectibles</option>
+      <option value="robbery">Robberies</option>
+      <option value="money">Money</option>
+      <option value="grind">Grind &amp; 100%</option>
+      <option value="misc">Hidden moments</option>
+      <option value="platinum">Platinum</option>
+    </select>
+  </label>
+  <label class="ctl">Status
+    <select id="statusFilter">
+      <option value="all">Earned + remaining</option>
+      <option value="earned">Earned only</option>
+      <option value="remaining">Remaining only</option>
+    </select>
+  </label>
+  <label class="ctl">Hidden
+    <select id="hiddenFilter">
+      <option value="all">Hidden + visible</option>
+      <option value="hidden">Hidden only (28)</option>
+      <option value="visible">Visible only (27)</option>
+    </select>
+  </label>
+  <label class="ctl check"><input id="missableOnly" type="checkbox"> Missable only</label>
+  <label class="ctl check spoiler"><input id="spoilerToggle" type="checkbox"> Spoiler shield: hide story trophies until earned</label>
+  <span class="tools">
+    <button id="exportBtn" type="button">Export progress (JSON)</button>
+    <label class="import-btn">Import progress <input id="importFile" type="file" accept="application/json,.json"></label>
+    <button id="resetBtn" type="button">Reset</button>
+  </span>
+</section>
+
+<main>
+  <section id="view-checklist" class="view">
+    <div class="list-wrap">
+      <ol id="trophyList" class="trophy-list"></ol>
+      <aside class="detail" id="detailPane" aria-live="polite">
+        <p class="detail-empty">Select a trophy to read its guide and sources.</p>
+      </aside>
+    </div>
+    <p id="noResults" class="no-results" hidden>No trophies match these filters.</p>
+  </section>
+
+  <section id="view-roadmap" class="view" hidden>
+    <h2>Platinum roadmap — the order to earn them in</h2>
+    <p class="lede">Six stages, built from the official descriptions. Story first, then stranger strands, then activities, collectibles, robberies and money, and the long grinds last. Save manually at the start of every chapter: the game has no mission replay (OutputLag).</p>
+    <p class="warn-banner">⚠ Missable flag — 1 trophy: <strong>Positive Mental Attitude (#28)</strong>. Meditate at every spot you find, starting in Chapter 1 — one spot disappears after that chapter and there is no mission replay (OutputLag / KeenGamer). Every other trophy can be finished in free roam after the story.</p>
+    <ol id="roadmapStages" class="roadmap"></ol>
+    <div class="roadmap-notes">
+      <h3>Before you start</h3>
+      <ul>
+        <li><strong>Manual saves:</strong> keep one at the start of every chapter and one before the final mission — there is no mission replay and no New Game Plus (OutputLag).</li>
+        <li><strong>Cheats off:</strong> PowerPyx reports that turning on a cheat disables trophies (via PlanetGTA6).</li>
+        <li><strong>One missable:</strong> Positive Mental Attitude is the only potentially missable trophy (KeenGamer). Meditate at every spot you find, starting in Chapter 1.</li>
+        <li><strong>Time:</strong> about 200 hours for the platinum is the early estimate (OutputLag). No online trophies and no difficulty trophies — it is long, not hard.</li>
+        <li><strong>100% last:</strong> A Long Road (gold, 100% completion) is the hardest trophy (KeenGamer) and comes last, once every other stage is done.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="view-missable" class="view" hidden>
+    <h2>Missable warnings</h2>
+    <p class="lede">Only one trophy is confirmed as potentially missable. Everything else can be finished in free roam after the story — but with no mission replay, manual saves are still your safety net.</p>
+    <div id="missableList" class="missable-list"></div>
+    <div class="save-advice">
+      <h3>Save discipline (from the official descriptions + OutputLag)</h3>
+      <ul>
+        <li>Keep a manual save at the start of every chapter.</li>
+        <li>Keep a separate save before the final mission.</li>
+        <li>Meditate at every meditation spot the moment you find it — do not leave them for after the story.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="view-about" class="view" hidden>
+    <h2>Sources &amp; how to use this guide</h2>
+    <div class="about-grid">
+      <div>
+        <h3>Where every fact comes from</h3>
+        <ul>
+          <li><strong>Exophase</strong> — every trophy's official name, description and grade, checked live against the official list.</li>
+          <li><strong>PSNProfiles</strong> — PSN's progress targets and grades, cross-checked against Exophase (they agree on all 55).</li>
+          <li><strong>PlanetGTA6</strong> — visible (27) vs hidden (28) split, cross-checked with Exophase, PSNProfiles and TrueAchievements.</li>
+          <li><strong>OutputLag</strong> — missable warning (Chapter 1 balcony meditation), no mission replay, robberies unlocking in Chapters 3–4, ~200-hour estimate, trophies with no confirmed method at launch.</li>
+          <li><strong>KeenGamer</strong> — 18 meditation spots, Positive Mental Attitude as the only potentially missable trophy, A Long Road as the hardest trophy.</li>
+          <li><strong>U7BUY</strong> — 42 Shooting Range challenges for The Shootist.</li>
+        </ul>
+        <p>Every guide in this app is written in our own words for this entry. A specific number or step is only stated when a source above confirms it; where no source confirms a detail, the guide says so instead of inventing one.</p>
+      </div>
+      <div>
+        <h3>How to use it</h3>
+        <ul>
+          <li>Tick a trophy off when you earn it — progress is saved in this browser (localStorage) and survives reloads.</li>
+          <li><strong>Export</strong> downloads your progress as JSON; <strong>Import</strong> reads it back on any device.</li>
+          <li><strong>Spoiler shield</strong> hides the names and descriptions of hidden story trophies until you earn them.</li>
+          <li>Deep links work: <code>?view=roadmap</code>, <code>?view=missable</code>, <code>?view=guide&amp;id=28</code>, <code>?spoiler=on</code>, <code>?earned=2,3,5</code> (demo pre-checks, in-memory only).</li>
+          <li>Works fully offline — every file lives under this app folder and nothing is fetched from the network.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>Leonida Platinum — an offline, open guide to the 55 PlayStation 5 trophies of Grand Theft Auto VI. Official names and descriptions as published on PlayStation; guides in our own words with named sources. No Rockstar artwork or logo is used anywhere in this app.</p>
+</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>
