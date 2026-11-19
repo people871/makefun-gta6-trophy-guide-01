@@ -1,1 +1,24 @@
-[{"file":"1-checklist.jpg","note":"Cover: checklist with 12 of 55 earned, progress bar, grade counts and all filters visible.","path":"/?earned=2,3,4,5,6,7,8,14,15,16,17,21","viewport":{"height":800,"width":1280}},{"file":"2-guide.jpg","note":"Guide detail for Positive Mental Attitude: official description, guide text, missable warning and named sources.","path":"/?view=guide&id=28","viewport":{"height":800,"width":1280}},{"file":"3-roadmap.jpg","note":"Platinum roadmap: six stages in order, with the missable-warning banner on top.","path":"/?view=roadmap","viewport":{"height":800,"width":1280}},{"file":"4-spoiler.jpg","note":"Spoiler shield on: hidden trophies masked until earned, earned ones revealed, export/import controls visible.","path":"/?spoiler=on&earned=2,3,5","viewport":{"height":800,"width":1280}}]
+{
+  "screenshots": [
+    {
+      "file": "1-checklist.jpg",
+      "title": "Cover — three-column trophy board",
+      "notes": "The opening view of Leonida Platinum: a dense three-column board with the trophy checklist on the left, the step-by-step guide for trophy 28 in the middle, and a sources rail on the right. Twelve of the fifty-five trophies show as earned, the guide for trophy 28 lists its steps with a meditation counter reading 6 of 18, and a strip at the top summarises the audit numbers for the whole set, with the progress bar reflecting the 12 trophies already earned."
+    },
+    {
+      "file": "2-guide.jpg",
+      "title": "Guide view — trophy 28 with spoiler shield on",
+      "notes": "The detail view for trophy 28 while the spoiler shield is switched on. Hidden trophies stay covered in the list so their names and descriptions cannot be read, yet the guide for trophy 28 itself remains fully readable, including its numbered steps, the missable warning, and its cited sources."
+    },
+    {
+      "file": "3-roadmap.jpg",
+      "title": "Platinum roadmap — next steps and six stages",
+      "notes": "The platinum roadmap screen: a Next Up list of the trophies to chase first, followed by six stage cards laid out in two columns showing progress through each stage of the journey. A banner at the top warns about the missable trophy so the player does not lose it by playing past the point of no return."
+    },
+    {
+      "file": "4-spoiler.jpg",
+      "title": "Missable-only filter with spoiler shield on",
+      "notes": "The checklist narrowed to missable trophies only, which leaves a single result on screen, with the spoiler shield still active. The export and import controls are visible, and the meditation counter for trophy 28 again reads 6 of 18, showing the saved progress carried over into this filtered view."
+    }
+  ]
+}
