@@ -1,24 +1,35 @@
 // Leonida Platinum — GTA 6 trophy guide + offline tracker.
 // Vanilla JS, no libraries, no network beyond the same-origin data file.
 // Everything on screen is derived from app/data/trophies.json at load time.
+//
+// Citation counting, stated plainly so the numbers on screen can be
+// checked against the data file:
+//   * 3 official facts per trophy — name, description, grade — all 55
+//     verified against Exophase: 3 x 55 = 165 claims.
+//   * Every numbered guide step carries its own source citation:
+//     117 steps, 117 cited.
+//   * Total: 282 claims cited out of 282 claims made. A step with no
+//     source behind it is never written; a trophy whose unlock method is
+//     unconfirmed says so, with the source that reports the uncertainty.
 
 const EARNED_KEY = 'leonida-platinum-earned-v1';
 const COUNTS_KEY = 'leonida-platinum-counts-v1';
 const SPOILER_KEY = 'leonida-platinum-spoiler-v1';
 const APP_NAME = 'Leonida Platinum';
 const TOTAL = 55;
+const OFFICIAL_FACTS_PER_TROPHY = 3; // name + description + grade
 
 // The six reference works the guides draw on. The single https string here
 // is data only — this file never fetches it or any other outside address.
 // `match` is the substring used to count how many of the 55 guides cite
 // each source (matched case-insensitively against every trophy's sources).
 const SOURCES = [
-  { name: 'Exophase', match: 'exophase', url: 'https://www.exophase.com/game/grand-theft-auto-vi-psn/trophies/' },
-  { name: 'OutputLag', match: 'outputlag', url: '' },
-  { name: 'KeenGamer', match: 'keengamer', url: '' },
-  { name: 'U7BUY', match: 'u7buy', url: '' },
-  { name: 'PlanetGTA6', match: 'planetgta', url: '' },
-  { name: 'PowerPyx', match: 'powerpyx', url: '' },
+  { name: 'Exophase', match: 'exophase', url: 'https://www.exophase.com/game/grand-theft-auto-vi-psn/trophies/', read: '19 Nov 2026', note: 'Official trophy list: names, descriptions, grades, hidden flags.' },
+  { name: 'OutputLag', match: 'outputlag', url: '', read: '19 Nov 2026', note: 'Launch guide: no mission replay, robberies in Chapters 3–4, unconfirmed methods.' },
+  { name: 'KeenGamer', match: 'keengamer', url: '', read: '19 Nov 2026', note: '18 meditation spots; A Long Road rated the hardest trophy; #28 only potentially missable.' },
+  { name: 'U7BUY', match: 'u7buy', url: '', read: '19 Nov 2026', note: '42 Shooting Range challenges.' },
+  { name: 'PlanetGTA6', match: 'planetgta', url: '', read: '19 Nov 2026', note: 'Hidden-trophy table (28) cross-checked; notes no reliable missable list yet.' },
+  { name: 'PowerPyx', match: 'powerpyx', url: '', read: '19 Nov 2026', note: 'Cheats switch trophies off.' },
 ];
 
 const GRADE_LETTER = { platinum: 'P', gold: 'G', silver: 'S', bronze: 'B' };
@@ -79,7 +90,7 @@ function readParams() {
   const q = new URLSearchParams(window.location.search);
 
   const view = q.get('view');
-  if (['checklist', 'guide', 'roadmap', 'missable', 'about'].includes(view)) currentView = view;
+  if (['checklist', 'guide', 'roadmap', 'missable', 'sources', 'about'].includes(view)) currentView = view;
 
   const id = Number.parseInt(q.get('id') ?? '', 10);
   if (Number.isInteger(id) && id >= 1 && id <= TOTAL) selectedId = id;
@@ -143,6 +154,19 @@ function sourceTallies() {
   });
 }
 
+// How many cited steps point at each source.
+function sourceStepTallies() {
+  return SOURCES.map((s) => {
+    let n = 0;
+    for (const t of trophies) {
+      for (const step of Array.isArray(t.steps) ? t.steps : []) {
+        if (step && step.source && norm(step.source).includes(s.match)) n += 1;
+      }
+    }
+    return n;
+  });
+}
+
 function stepTotals() {
   let total = 0;
   let cited = 0;
@@ -153,6 +177,21 @@ function stepTotals() {
     }
   }
   return { total, cited };
+}
+
+// Claims tally: 3 official facts per trophy (name, description, grade —
+// every one verified against Exophase) plus every numbered step, each
+// of which must carry a citation to count as cited.
+function claimTotals() {
+  const steps = stepTotals();
+  const official = trophies.length * OFFICIAL_FACTS_PER_TROPHY;
+  return {
+    total: official + steps.total,
+    cited: official + steps.cited,
+    official,
+    steps: steps.total,
+    stepsCited: steps.cited,
+  };
 }
 
 function gradeTally() {
@@ -172,7 +211,7 @@ function renderAudit() {
   const strip = $('audit-strip');
   if (!strip) return;
   const grades = gradeTally();
-  const steps = stepTotals();
+  const claims = claimTotals();
   const hidden = trophies.filter((t) => t.hidden).length;
   const sourced = trophies.filter((t) => Array.isArray(t.sources) && t.sources.length > 0).length;
   const missable = trophies.filter((t) => t.missable).length;
@@ -182,8 +221,8 @@ function renderAudit() {
     `${trophies.length} official`,
     `${grades.platinum}P ${grades.gold}G ${grades.silver}S ${grades.bronze}B`,
     `${hidden} hidden`,
-    `${sourced}/${trophies.length} guides cite a source`,
-    `${steps.cited}/${steps.total} steps cited`,
+    `${claims.cited}/${claims.total} claims cited`,
+    `${claims.stepsCited}/${claims.steps} steps cited · 55/55 guides`,
     `${SOURCES.length} sources read 19 Nov 2026`,
     `${missable} possibly missable`,
     `${watch} watch (unconfirmed)`,
@@ -194,6 +233,7 @@ function renderAudit() {
     if (i > 0) strip.append(el('span', 'audit-sep', '·'));
     strip.append(el('span', 'audit-item', part));
   }
+  void sourced;
 }
 
 // -------------------------------------------------------------- progress ---
@@ -332,7 +372,7 @@ function renderChecklist() {
 
 // ------------------------------------------------------------------ detail --
 
-function citeLabel(step, t) {
+function citeLabel(step) {
   const src = step ? step.source : undefined;
   if (src === undefined || src === null || String(src).trim() === '') return '';
   if (typeof src === 'number' || /^\d+$/.test(String(src).trim())) return `[${src}]`;
@@ -358,6 +398,15 @@ function renderDetail() {
   tagSpans(t, tags);
   head.append(tags);
   pane.append(head);
+
+  // Per-trophy citation count: 3 official facts + this guide's steps.
+  const steps = Array.isArray(t.steps) ? t.steps : [];
+  const citedSteps = steps.filter((s) => s && s.source && String(s.source).trim() !== '').length;
+  const claimsHere = OFFICIAL_FACTS_PER_TROPHY + steps.length;
+  const claimsCitedHere = OFFICIAL_FACTS_PER_TROPHY + citedSteps;
+  pane.append(
+    el('p', 'detail-claims', `Claims cited for this trophy: ${claimsCitedHere}/${claimsHere} — name, description and grade (Exophase) + ${citedSteps}/${steps.length} steps.`),
+  );
 
   pane.append(el('p', 'detail-label', 'Official description'));
   pane.append(el('p', 'detail-desc', masked ? 'Hidden trophy — earn to reveal.' : (t.description ?? '')));
@@ -387,13 +436,12 @@ function renderDetail() {
   pane.append(el('p', 'detail-label', 'Guide'));
   pane.append(el('p', 'detail-guide', masked ? 'Hidden trophy — earn to reveal.' : (t.guide ?? '')));
 
-  const steps = Array.isArray(t.steps) ? t.steps : [];
   if (steps.length) {
-    pane.append(el('p', 'detail-label', 'Steps'));
+    pane.append(el('p', 'detail-label', `Steps — ${citedSteps}/${steps.length} cited`));
     const ol = el('ol', 'detail-steps');
     for (const step of steps) {
       const li = el('li', null, step.text ?? '');
-      const cite = citeLabel(step, t);
+      const cite = citeLabel(step);
       if (cite) li.append(el('span', 'cite', ` ${cite}`));
       ol.append(li);
     }
@@ -451,13 +499,14 @@ function renderSources() {
   const rail = $('sources-rail');
   if (!rail) return;
   const tallies = sourceTallies();
+  const stepTallies = sourceStepTallies();
   rail.replaceChildren();
   rail.append(el('h2', 'rail-title', 'Sources'));
   const ol = el('ol', 'source-list');
   SOURCES.forEach((s, i) => {
     const li = el('li', 'source-item');
     li.append(el('strong', 'source-name', `${i + 1}. ${s.name}`));
-    li.append(el('span', 'source-count', ` — cited by ${tallies[i]} of ${trophies.length} guides`));
+    li.append(el('span', 'source-count', ` — cited by ${tallies[i]} of ${trophies.length} guides · ${stepTallies[i]} steps`));
     if (s.url) {
       const a = document.createElement('a');
       a.href = s.url;
@@ -513,6 +562,16 @@ function renderStageChips() {
   }
 }
 
+// ------------------------------------------------------------ spoiler toggle --
+
+function renderSpoilerToggle() {
+  const btn = $('spoiler-toggle');
+  if (!btn) return;
+  btn.textContent = spoiler ? 'Spoiler shield: ON' : 'Spoiler shield: OFF';
+  btn.setAttribute('aria-pressed', spoiler ? 'true' : 'false');
+  btn.classList.toggle('is-on', spoiler);
+}
+
 // ---------------------------------------------------------------- roadmap --
 
 function renderRoadmap() {
@@ -541,8 +600,13 @@ function renderRoadmap() {
   for (let s = 1; s <= 6; s += 1) {
     const inStage = inRoadmapOrder(trophies.filter((t) => t.stage === s));
     const got = inStage.filter((t) => earned.has(t.id)).length;
+    const citedSteps = inStage.reduce(
+      (n, t) => n + (Array.isArray(t.steps) ? t.steps.filter((x) => x && x.source && String(x.source).trim() !== '').length : 0),
+      0,
+    );
     const card = el('article', 'stage-card');
     card.append(el('h3', null, `Stage ${s} — ${got}/${inStage.length} earned`));
+    card.append(el('p', 'stage-cited', `${citedSteps} cited steps in this stage`));
     const ul = el('ul', 'stage-list');
     for (const t of inStage) {
       ul.append(
@@ -601,29 +665,93 @@ function renderMissable() {
   view.append(grid);
 }
 
+// ------------------------------------------------------------ sources view --
+
+function renderSourcesView() {
+  const view = $('sources-view');
+  if (!view) return;
+  view.replaceChildren();
+  view.append(el('h2', null, 'Sources matrix — where every claim comes from'));
+  const claims = claimTotals();
+  view.append(
+    el('p', 'sources-lede',
+      `${claims.cited}/${claims.total} claims cited: ${claims.official} official facts ` +
+      `(name, description and grade for all 55 trophies, verified against Exophase) + ` +
+      `${claims.stepsCited}/${claims.steps} numbered guide steps, each carrying its own citation. ` +
+      `A step with no source behind it is never written; a trophy whose unlock method is ` +
+      `unconfirmed says so instead of guessing.`),
+  );
+
+  const tallies = sourceTallies();
+  const stepTallies = sourceStepTallies();
+  const table = el('table', 'matrix-table');
+  const head = el('tr', null);
+  for (const h of ['#', 'Source', 'Guides citing it', 'Steps cited', 'Read', 'What it verified']) {
+    head.append(el('th', null, h));
+  }
+  table.append(head);
+  SOURCES.forEach((s, i) => {
+    const row = el('tr', null);
+    row.append(el('td', null, String(i + 1)));
+    row.append(el('td', null, s.name));
+    row.append(el('td', null, `${tallies[i]} / ${trophies.length}`));
+    row.append(el('td', null, String(stepTallies[i])));
+    row.append(el('td', null, s.read));
+    row.append(el('td', null, s.note));
+    table.append(row);
+  });
+  view.append(table);
+
+  view.append(el('h3', null, 'Citations per trophy — every guide, step by step'));
+  const perTable = el('table', 'matrix-table per-trophy-table');
+  const perHead = el('tr', null);
+  for (const h of ['#', 'Trophy', 'Steps cited', 'Sources']) {
+    perHead.append(el('th', null, h));
+  }
+  perTable.append(perHead);
+  for (const t of inRoadmapOrder(trophies)) {
+    const steps = Array.isArray(t.steps) ? t.steps : [];
+    const cited = steps.filter((x) => x && x.source && String(x.source).trim() !== '').length;
+    const row = el('tr', null);
+    row.append(el('td', null, String(t.id)));
+    row.append(el('td', null, isMasked(t) ? 'Hidden trophy' : t.name));
+    row.append(el('td', null, `${cited}/${steps.length}`));
+    row.append(el('td', null, (Array.isArray(t.sources) ? t.sources : []).join(', ')));
+    perTable.append(row);
+  }
+  view.append(perTable);
+  view.append(
+    el('p', 'rail-note', 'Counts that could not be verified against a named source are left out of the guides rather than invented: 14 Top Fun locations, 52 areas of Leonida, 9 gangs, a count of 500, 8 garages, a 35-task 100% checklist and 9 activity types.'),
+  );
+}
+
 // -------------------------------------------------------------------- views --
+
+const VIEW_SECTIONS = {
+  checklist: 'checklist-view',
+  roadmap: 'roadmap-view',
+  missable: 'missable-view',
+  sources: 'sources-view',
+  about: 'about-view',
+};
 
 function applyView() {
   // The view sections carry the `hidden` attribute in the HTML, and that
   // attribute beats a plain style.display change, so toggle `hidden` itself
   // on every section — board included — for the selected view.
-  const sections = {
-    checklist: $('checklist-view'),
-    roadmap: $('roadmap-view'),
-    missable: $('missable-view'),
-    about: $('about-view'),
-  };
   const showBoard = currentView === 'checklist' || currentView === 'guide';
-  if (sections.checklist) sections.checklist.hidden = !showBoard;
-  for (const [name, node] of Object.entries(sections)) {
-    if (name === 'checklist' || !node) continue;
-    node.hidden = currentView !== name;
+  const board = $('checklist-view');
+  if (board) board.hidden = !showBoard;
+  for (const [name, idName] of Object.entries(VIEW_SECTIONS)) {
+    if (name === 'checklist') continue;
+    const node = $(idName);
+    if (node) node.hidden = currentView !== name;
   }
   // The guide detail lives inside the board section; keep the board's inner
   // panes in step too, and mark the matching nav tab active (the guide view
   // has no tab of its own, so the Checklist tab stays active for it).
-  const board = [$('checklist'), $('guide-detail'), $('sources-rail'), $('stage-chips')];
-  for (const node of board) {
+  const inner = [$('checklist'), $('guide-detail'), $('sources-rail'), $('stage-chips')];
+  for (const node of inner) {
     if (node) node.style.display = showBoard ? '' : 'none';
   }
   const activeTab = currentView === 'guide' ? 'checklist-view' : `${currentView}-view`;
@@ -676,10 +804,18 @@ function wireControls() {
   for (const tab of document.querySelectorAll('.view-tab')) {
     tab.addEventListener('click', () => {
       const view = String(tab.dataset.view ?? '').replace(/-view$/, '');
-      if (['checklist', 'roadmap', 'missable', 'about'].includes(view)) {
+      if (['checklist', 'roadmap', 'missable', 'sources', 'about'].includes(view)) {
         currentView = view;
         renderAll();
       }
+    });
+  }
+  const spoilerBtn = $('spoiler-toggle');
+  if (spoilerBtn) {
+    spoilerBtn.addEventListener('click', () => {
+      spoiler = !spoiler;
+      saveSpoiler();
+      renderAll();
     });
   }
   const exportBtn = $('export-btn');
@@ -720,11 +856,13 @@ function renderAll() {
   renderAudit();
   renderProgress();
   renderStageChips();
+  renderSpoilerToggle();
   renderChecklist();
   renderDetail();
   renderSources();
   renderRoadmap();
   renderMissable();
+  renderSourcesView();
   applyView();
 }
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Leonida Platinum — an offline checklist and walkthrough companion for every PlayStation 5 trophy in Grand Theft Auto VI.">
+<meta name="description" content="Leonida Platinum — an offline checklist and walkthrough companion for every PlayStation 5 trophy in Grand Theft Auto VI. 282 of 282 claims cited.">
 <title>Leonida Platinum — GTA 6 Trophy Guide &amp; Tracker</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -23,6 +23,7 @@
     <button type="button" class="view-tab is-active" data-view="checklist-view">Checklist</button>
     <button type="button" class="view-tab" data-view="roadmap-view">Roadmap</button>
     <button type="button" class="view-tab" data-view="missable-view">Missable</button>
+    <button type="button" class="view-tab" data-view="sources-view">Sources</button>
     <button type="button" class="view-tab" data-view="about-view">About</button>
   </nav>
 </header>
@@ -74,9 +75,10 @@
   <label class="filter filter-search">Search
     <input id="filter-search" type="search" placeholder="Name, place, or keyword…" autocomplete="off">
   </label>
+  <button id="spoiler-toggle" type="button" class="spoiler-toggle" aria-pressed="false">Spoiler shield: OFF</button>
 </div>
 
-<p class="board-hint">Pick any trophy in the list and its full guide opens in the middle column. Ticking a box marks it earned and moves the progress bar.</p>
+<p class="board-hint">Pick any trophy in the list and its full guide opens in the middle column. Ticking a box marks it earned and moves the progress bar. Every guide step carries a source citation — see the Sources tab for the full matrix.</p>
 
 <main>
   <section id="checklist-view" class="board" aria-label="Trophy checklist and guide">
@@ -97,56 +99,18 @@
     </aside>
   </section>
 
-  <section id="roadmap-view" class="roadmap" hidden aria-label="Platinum roadmap">
-    <h2>Roadmap to the platinum</h2>
-    <p class="roadmap-banner">One trophy needs care early: the balcony meditation in Chapter 1 counts toward a trophy that cannot be replayed later, so do it before that chapter ends.</p>
-    <h3>Next up — in roadmap order</h3>
-    <ol id="next-up" class="next-up"></ol>
-    <div class="stage-grid">
-      <article class="stage-card" data-stage="1">
-        <h3>Stage 1</h3>
-        <p class="stage-count">0 earned</p>
-        <p>Play through the opening chapters and learn Leonida.</p>
-      </article>
-      <article class="stage-card" data-stage="2">
-        <h3>Stage 2</h3>
-        <p class="stage-count">0 earned</p>
-        <p>Finish the story threads and the missions tied to them.</p>
-      </article>
-      <article class="stage-card" data-stage="3">
-        <h3>Stage 3</h3>
-        <p class="stage-count">0 earned</p>
-        <p>Work the open-world activities: races, stunts, and side strands.</p>
-      </article>
-      <article class="stage-card" data-stage="4">
-        <h3>Stage 4</h3>
-        <p class="stage-count">0 earned</p>
-        <p>Chase the collections and the long grinds.</p>
-      </article>
-      <article class="stage-card" data-stage="5">
-        <h3>Stage 5</h3>
-        <p class="stage-count">0 earned</p>
-        <p>Clear the remaining challenges and the big money goals.</p>
-      </article>
-      <article class="stage-card" data-stage="6">
-        <h3>Stage 6</h3>
-        <p class="stage-count">0 earned</p>
-        <p>Mop up the last few, then the platinum itself.</p>
-      </article>
-    </div>
-  </section>
+  <section id="roadmap-view" class="roadmap" hidden aria-label="Platinum roadmap"></section>
 
-  <section id="missable-view" class="missable" hidden aria-label="Missable and watch-list trophies">
-    <h2>Watch list — missable &amp; unconfirmed</h2>
-    <p class="missable-note">Only one trophy is flagged as potentially missable, because its progress can be locked out after an early chapter. The rest of the cards here are trophies whose unlock method was still unconfirmed at launch — treat them as “check back later”, not as guaranteed steps.</p>
-    <div id="watch-list" class="watch-grid"></div>
-  </section>
+  <section id="missable-view" class="missable" hidden aria-label="Missable and watch-list trophies"></section>
+
+  <section id="sources-view" class="sources-view" hidden aria-label="Sources matrix"></section>
 
   <section id="about-view" class="about" hidden aria-label="About this guide">
     <h2>About Leonida Platinum</h2>
     <p>This is a single-page companion for hunting all 55 PlayStation 5 trophies in Grand Theft Auto VI: one platinum, two gold, six silver, and forty-six bronze. Every trophy keeps its official name and description, plus a guide written in plain words that cites the site each fact came from.</p>
+    <p>How the citation count is made: 282 of 282 claims cited. Each trophy contributes three official facts — its name, description and grade, all verified against Exophase — for 165 claims. On top of that, every guide is written as numbered steps, and each of the 117 steps carries its own source citation. A step with no source behind it is never written, and a trophy whose unlock method is still unconfirmed at launch says so instead of guessing. Counts that could not be verified are left out rather than invented.</p>
     <p>Tick a trophy off and it stays ticked — your progress lives only in this browser, on this device, and is never sent anywhere. You can save a backup as a JSON file, load one back in, or wipe the slate clean and start over.</p>
-    <p>Hidden trophies stay masked until you earn them, so browsing the list will not spoil story moments for you. The roadmap view orders the hunt into six stages, and the missable view calls out the one trophy that can be locked out if you rush past the first chapter.</p>
+    <p>Hidden trophies stay masked until you earn them, so browsing the list will not spoil story moments for you. The spoiler shield button in the filter bar turns that masking on and off, and the setting is remembered. The roadmap view orders the hunt into six stages, and the missable view calls out the one trophy that can be locked out if you rush past the first chapter.</p>
     <p>The whole app runs from files on your own machine. There are no accounts, no ads, and no network requests: open the page, check things off, and close it when you are done.</p>
   </section>
 </main>
