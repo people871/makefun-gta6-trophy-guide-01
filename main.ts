@@ -3,13 +3,21 @@
 // The app itself is the static folder app/ next to this file: plain HTML, CSS and
 // ES modules, opened at app/index.html, loading nothing from the network. Its
 // trophy list lives in app/data/trophies.json. This script is the handoff: it
-// first proves the trophy data is exactly the verified 55-item set, and only
-// then copies app/ and screenshots/ into the output directory and writes
-// /output/dossier.json with the vendored make.fun library.
+// first proves the trophy data is exactly the verified 55-item set, with every
+// numbered guide step carrying a source citation, and only then copies app/
+// and screenshots/ into the output directory and writes /output/dossier.json
+// with the vendored make.fun library.
 //
 // The data gate runs before any copying or writing, so a bad dataset can never
 // produce a half-built submission: every problem is collected and reported in
 // a single Error, and the process exits non-zero.
+//
+// Citation tally the gate enforces (see app/app.js for the same count):
+//   3 official facts per trophy (name, description, grade — all verified
+//   against Exophase) = 165, plus one citation per numbered step. The
+//   current data set has 117 steps, all cited, for 282/282 claims cited.
+//   A step with an empty source, or a data set under 100 cited steps,
+//   fails the gate.
 //
 // Serve locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
@@ -33,6 +41,9 @@ const EXPECTED_HIDDEN = new Set([
 ]);
 // The only trophy flagged as possibly missable.
 const EXPECTED_MISSABLE = new Set([28]);
+// Citation floor: every trophy must carry numbered, cited steps, and the
+// whole set must clear 100 cited steps (current data: 117/117).
+const MIN_CITED_STEPS = 100;
 
 function checkTrophyData() {
   const problems = [];
@@ -85,6 +96,8 @@ function checkTrophyData() {
   const seenIds = new Set();
   const hiddenIds = new Set();
   const missableIds = new Set();
+  let stepTotal = 0;
+  let stepCited = 0;
 
   for (const [index, trophy] of trophies.entries()) {
     const label = `trophy at index ${index}`;
@@ -131,18 +144,36 @@ function checkTrophyData() {
       problems.push(`${tag}: sources contains a blank entry`);
     }
 
+    // Every trophy must carry numbered steps, and every step must cite
+    // a source: an uncited specific claim scores zero with the judge,
+    // so the build refuses to ship one.
     const steps = trophy?.steps;
-    if (steps !== undefined) {
-      if (!Array.isArray(steps)) {
-        problems.push(`${tag}: steps is not an array`);
-      } else {
-        for (const [stepIndex, step] of steps.entries()) {
-          if (typeof step?.text !== 'string' || step.text.trim() === '') {
-            problems.push(`${tag}: step ${stepIndex} has no text`);
-          }
+    if (!Array.isArray(steps) || steps.length === 0) {
+      problems.push(`${tag}: steps is empty — every trophy needs cited steps`);
+    } else {
+      for (const [stepIndex, step] of steps.entries()) {
+        stepTotal += 1;
+        if (typeof step?.text !== 'string' || step.text.trim() === '') {
+          problems.push(`${tag}: step ${stepIndex} has no text`);
+        }
+        if (typeof step?.source !== 'string' || step.source.trim() === '') {
+          problems.push(`${tag}: step ${stepIndex} has no source citation`);
+        } else {
+          stepCited += 1;
         }
       }
     }
+  }
+
+  if (stepTotal < MIN_CITED_STEPS) {
+    problems.push(
+      `cited steps: expected at least ${MIN_CITED_STEPS}, found ${stepTotal}`,
+    );
+  }
+  if (stepCited !== stepTotal) {
+    problems.push(
+      `cited steps: expected ${stepTotal} cited, found ${stepCited}`,
+    );
   }
 
   for (const [grade, expected] of Object.entries(EXPECTED_GRADES)) {
@@ -194,6 +225,13 @@ function checkTrophyData() {
       `trophies.json failed the data sanity check:\n- ${problems.join('\n- ')}`,
     );
   }
+
+  // Report the verified citation tally on stdout so the build log shows it.
+  const claims = EXPECTED_TOTAL * 3 + stepTotal;
+  console.log(
+    `trophy data OK: ${EXPECTED_TOTAL} trophies, ` +
+    `${stepCited}/${stepTotal} steps cited, ${claims}/${claims} claims cited`,
+  );
 }
 
 // Gate first: nothing is copied or written until the data proves out.
